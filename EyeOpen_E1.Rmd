@@ -1,0 +1,460 @@
+
+# Experiment 1
+
+## Experiment 1a
+
+Eyes
+
+```{r}
+df_E1a_clean <- df_E1a_raw %>% 
+  filter(isabove200 == 1) %>% 
+  select(-isabove200)
+```
+
+### Accuracy
+
+```{r}
+df_E1a_acc <- df_E1a_clean %>% 
+  group_by(SubjCode, Feature, State) %>% 
+  summarize(Acc = mean(Acc),
+            .groups = "drop")
+df_E1a_acc
+```
+
+```{r}
+df_E1a_acc_wide <- df_E1a_acc %>% 
+  pivot_wider(id_cols = SubjCode,
+              names_from = State,
+              values_from = Acc)
+df_E1a_acc_wide
+```
+
+#### t-test
+```{r}
+t_E1a_acc <- t.test(df_E1a_acc_wide$open,
+                    df_E1a_acc_wide$closed,
+                    paired = TRUE,
+                    var.equal = TRUE)
+t_E1a_acc
+```
+
+```{r}
+# effect size
+repeated_measures_d(t_E1a_acc)
+```
+
+#### RM-ANOVA
+Whether the performance varies across the four locations:
+```{r}
+aov_E1a_acc <- aov_4(Acc ~ State * Location + 
+                       (State * Location | SubjCode),
+                     data = df_E1a_clean,
+                     fun_aggregate = mean)
+aov_E1a_acc
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1a_acc <- emmeans(aov_E1a_acc, ~ State * Location)
+emm_E1a_acc
+```
+
+#### Follow-up analysis
+
+Open vs. closed state:
+```{r}
+emmeans(aov_E1a_acc, "pairwise" ~ State)
+```
+
+```{r}
+emmip(aov_E1a_acc, ~State, CIs = TRUE)
+```
+
+```{r}
+contrast(emm_E1a_acc, "pairwise", simple = "State")[1:4] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1a_acc, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+emmip(aov_E1a_acc, State ~ Location, CIs = TRUE)
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+### Correct response times
+
+```{r}
+df_E1a_rt <- df_E1a_clean %>% 
+  filter(Acc == 1) %>%
+  group_by(SubjCode, Feature, State) %>% 
+  summarize(meanRT = round(mean(RT)),
+            .groups = "drop")
+df_E1a_rt
+```
+
+```{r}
+df_E1a_rt_wide <- df_E1a_rt %>% 
+  pivot_wider(id_cols = SubjCode,
+              names_from = State,
+              values_from = meanRT)
+df_E1a_rt_wide
+```
+
+#### t-test
+```{r}
+t_E1a_rt <- t.test(df_E1a_rt_wide$open,
+                    df_E1a_rt_wide$closed,
+                    paired = TRUE,
+                    var.equal = TRUE)
+t_E1a_rt
+```
+
+```{r}
+# effect size
+repeated_measures_d(t_E1a_rt)
+```
+
+
+#### RM-ANOVA
+
+```{r}
+aov_E1a_rt <- aov_4(RT ~ State * Location + 
+                       (State * Location | SubjCode),
+                     data = df_E1a_clean %>% 
+                      filter(Acc == 1),
+                     fun_aggregate = mean)
+aov_E1a_rt
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1a_rt <- emmeans(aov_E1a_rt, ~ State * Location)
+emm_E1a_rt
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E1a_rt, "pairwise" ~ State)
+```
+
+```{r}
+emmip(aov_E1a_rt, ~State, CIs = TRUE)
+```
+
+```{r}
+contrast(emm_E1a_rt, "pairwise", simple = "State")[1:4] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1a_rt, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+emmip(aov_E1a_rt, State ~ Location, CIs = TRUE)
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+## Experiment 1b
+
+Mouth
+
+```{r}
+df_E1b_clean <- df_E1b_raw %>% 
+  filter(isabove200 == 1) %>%
+  select(-isabove200)
+```
+
+### Accuracy
+
+```{r}
+df_E1b_acc <- df_E1b_clean %>% 
+  group_by(SubjCode, Feature, State) %>% 
+  summarize(Acc = mean(Acc),
+            N = n(),
+            .groups = "drop")
+df_E1b_acc
+```
+
+```{r}
+df_E1b_acc_wide <- df_E1b_acc %>% 
+  pivot_wider(id_cols = SubjCode,
+              names_from = State,
+              values_from = Acc)
+df_E1b_acc_wide
+```
+
+#### t-test
+```{r}
+t_E1b_acc <- t.test(df_E1b_acc_wide$open,
+                    df_E1b_acc_wide$closed,
+                    paired = TRUE,
+                    var.equal = TRUE)
+t_E1b_acc
+```
+
+```{r}
+# effect size
+repeated_measures_d(t_E1b_acc)
+```
+
+#### RM-ANOVA
+
+```{r}
+aov_E1b_acc <- aov_4(Acc ~ State * Location + 
+                       (State * Location | SubjCode),
+                     data = df_E1b_clean,
+                     fun_aggregate = mean)
+aov_E1b_acc
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1b_acc <- emmeans(aov_E1b_acc, ~ State * Location)
+emm_E1b_acc
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E1b_acc, "pairwise" ~ State)
+```
+
+```{r}
+emmip(aov_E1b_acc, ~ State, CIs = TRUE)
+```
+
+```{r}
+contrast(emm_E1b_acc, "pairwise", simple = "State")[1:4] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1b_acc, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+emmip(aov_E1b_acc, State ~ Location, CIs = TRUE)
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+### Correct response times
+
+```{r}
+df_E1b_rt <- df_E1b_clean %>% 
+  filter(Acc == 1) %>%
+  group_by(SubjCode, Feature, State) %>% 
+  summarize(meanRT = round(mean(RT)),
+            .groups = "drop")
+df_E1b_rt
+```
+
+```{r}
+df_E1b_rt_wide <- df_E1b_rt %>% 
+  pivot_wider(id_cols = SubjCode,
+              names_from = State,
+              values_from = meanRT)
+df_E1b_rt_wide
+```
+
+#### t-test
+```{r}
+t_E1b_rt <- t.test(df_E1b_rt_wide$open,
+                    df_E1b_rt_wide$closed,
+                    paired = TRUE,
+                    var.equal = TRUE)
+t_E1b_rt
+```
+
+```{r}
+# effect size
+repeated_measures_d(t_E1b_rt)
+```
+
+#### RM-ANOVA
+
+```{r}
+aov_E1b_rt <- aov_4(RT ~ State * Location + 
+                       (State * Location | SubjCode),
+                     data = df_E1b_clean %>% 
+                      filter(Acc == 1),
+                     fun_aggregate = mean)
+aov_E1b_rt
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1b_rt <- emmeans(aov_E1b_rt, ~ State * Location)
+emm_E1b_rt
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E1b_rt, "pairwise" ~ State)
+```
+
+```{r}
+emmip(aov_E1b_rt, ~ State, CIs = TRUE)
+```
+
+```{r}
+contrast(emm_E1b_rt, "pairwise", simple = "State")[1:4] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1b_rt, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+emmip(aov_E1b_rt, State ~ Location, CIs = TRUE)
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+## Experiment 1a & 1b
+
+```{r}
+df_E1_clean <- df_E1_raw %>% 
+  filter(isabove200 == 1) %>% 
+  select(-isabove200)
+```
+
+### Accuracy
+
+#### RM-ANOVA
+
+```{r}
+aov_E1_acc <- aov_4(Acc ~ Feature * State * Location + 
+                       (State * Location | SubjCode),
+                     data = df_E1_clean,
+                     fun_aggregate = mean)
+aov_E1_acc
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1_acc <- emmeans(aov_E1_acc, ~ Feature * State * Location)
+emm_E1_acc
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E1_acc, "pairwise" ~ State)
+```
+
+```{r}
+emmeans(aov_E1_acc, ~ State + Feature) %>% 
+  contrast(interaction = "pairwise")
+```
+Differences between open and closed states does not depend on the feature.
+
+```{r}
+contrast(emm_E1_acc, "pairwise", simple = "State")[1:8] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1_acc, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+#### Plot
+
+```{r}
+emmip(aov_E1_acc, State ~ Location | Feature, CIs = TRUE) +
+  labs(y = "Accuracy")
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+### Correct response times
+
+#### RM-ANOVA
+
+```{r}
+aov_E1_rt <- aov_4(RT ~ State * Location * Feature + 
+                     (State * Location | SubjCode),
+                   data = filter(df_E1_clean,
+                                 Acc == 1),
+                   fun_aggregate = mean)
+aov_E1_rt
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E1_rt <- emmeans(aov_E1_rt, ~ State * Location * Feature)
+emm_E1_rt
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E1_rt, "pairwise" ~ State)
+```
+
+```{r}
+emmeans(aov_E1_rt, ~ State + Feature) %>% 
+  contrast(interaction = "pairwise")
+```
+
+```{r}
+contrast(emm_E1_rt, "pairwise", simple = "State")[1:8] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E1_rt, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+#### Plot
+
+```{r}
+emmip(aov_E1_rt, State ~ Location | Feature, CIs = TRUE) +
+  labs(y = "correct Response Times (ms)")
+```
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom

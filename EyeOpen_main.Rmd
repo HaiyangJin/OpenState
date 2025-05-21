@@ -1,0 +1,165 @@
+---
+title: "Role of open states in eye advantages: Analysis"
+author: "[Haiyang Jin](https://haiyangjin.github.io/)"
+date: "`r format(Sys.Date(), '%Y %b %d')`"
+output: 
+  html_document:
+    code_folding: show
+    df_print: paged
+    number_sections: true
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{=html}
+<style>
+pre {
+overflow-x: auto;
+}
+pre code {
+word-wrap: normal;
+white-space: pre;
+}
+</style>
+```
+
+```{r global_options, echo = FALSE, include = FALSE}
+options(width = 1500)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      include = TRUE, cache = FALSE, tidy = FALSE,
+                      size = "big", fig.width=8, fig.asp=0.7)
+xaringanExtra::use_clipboard()
+```
+
+# Preparations
+Load libraries and general settings:
+```{r setup}
+## load libraries
+library(tidyverse)
+library(afex)
+library(emmeans)
+library(effectsize)
+library(ggpubr)
+library(psychr) # remotes::install_github("haiyangjin/psychr")
+```
+
+```{r}
+emm_options(lmer.df = "Satterthwaite") # as pre-registered
+
+two_colors <- c("#D55E00", "#56B4E9") # facilitation and interference
+sig_color <- "red"
+dark_colors <- c("#800D00", "#165F83", "gray45") # darker (facilitation, interference, null)
+
+dir_lmm <- "hpc_lmm"
+dir_lmm_cue <- "hpc_lmm_cue"
+dir_fig <- "figure"
+ylimit_cf_d <- c(-.5, 3.6)
+ylimit_cf_fi_d <- c(-1.1, 1.1)
+ylimit_cf_rt <- c(650, 1150)
+ylimit_cf_fi_rt <- c(-100, 100)
+
+# APA theme for figures
+theme_set(papaja::theme_apa(base_size = 12, base_family = "Helvetica", box = FALSE))
+theme_update(strip.placement = "outside")
+```
+
+## Experiment 1
+
+```{r}
+df_E1a_raw <- readxl::read_excel(file.path("data", "Exp1a_eye_raw_data.xlsx")) %>% 
+  filter(Procedure != "PracProc") %>% 
+  transmute(SubjCode = as_factor(sprintf("11%02d", Subject)),
+            Age,
+            Sex = as.factor(Sex),
+            Feature = "eye",
+            State = str_remove(ExperimentName, "Hard") %>% tolower(),
+            State = factor(State, levels = c("open", "close")),
+            State = fct_recode(State, open = "open", closed = "close"),
+            Location = as.factor(Location),
+            Acc = TrialSlide.ACC,
+            RT = TrialSlide.RT,
+            isabove200 = as.integer(RT > 200))
+str(df_E1a_raw)
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+```{r}
+df_E1b_raw <- readxl::read_excel(file.path("data", "Exp1b_mouth_raw_data.xlsx")) %>% 
+  filter(Procedure != "PracProc") %>% 
+  transmute(SubjCode = as_factor(sprintf("12%02d", Subject)),
+            Age,
+            Sex = as.factor(Sex),
+            Feature = "mouth",
+            State = str_remove(ExperimentName, "Hard") %>% tolower(),
+            State = factor(State, levels = c("open", "close")),
+            State = fct_recode(State, open = "open", closed = "close"),
+            Location = as.factor(Location),
+            Acc = TrialSlide.ACC,
+            RT = TrialSlide.RT,
+            isabove200 = as.integer(RT > 200))
+str(df_E1b_raw)
+```
+
+```{r}
+df_E1_raw <- bind_rows(df_E1a_raw, df_E1b_raw) %>% 
+  mutate(Feature = as_factor(Feature))
+
+str(df_E1_raw)
+```
+
+## Experiment 2
+
+```{r}
+df_E2a_raw <- read.csv(file.path("data", "Exp2_eye_raw_data.csv")) %>% 
+  filter(Procedure != "PracProc") %>% 
+  transmute(SubjCode = as_factor(sprintf("21%02d", Subject)),
+            Age,
+            Sex = as.factor(Sex),
+            Feature = "eye",
+            State = str_remove(ExperimentName, "Hard") %>% tolower(),
+            State = factor(State, levels = c("open", "close")),
+            State = fct_recode(State, open = "open", closed = "close"),
+            Orientation = factor(invertion, levels = c("no", "yes")),
+            Orientation = fct_recode(Orientation, upright = "no", inverted = "yes"),
+            Location = as.factor(Location),
+            Acc = TrialBlank.ACC,
+            RT = TrialBlank.RT,
+            isabove200 = as.integer(RT > 200))
+str(df_E2a_raw)
+```
+
+
+```{r}
+df_E2b_raw <- read.csv(file.path("data", "Exp2_mouth_raw_data.csv")) %>% 
+  filter(Procedure != "PracProc") %>% 
+  transmute(SubjCode = as_factor(sprintf("21%02d", Subject)),
+            Age,
+            Sex = as.factor(Sex),
+            Feature = "mouth",
+            State = str_remove(ExperimentName, "Hard") %>% tolower(),
+            State = factor(State, levels = c("open", "close")),
+            State = fct_recode(State, open = "open", closed = "close"),
+            Orientation = factor(Type, levels = c("upright", "invert")),
+            Orientation = fct_recode(Orientation, upright = "upright", inverted = "invert"),
+            Location = as.factor(Location),
+            Acc = TrialBlank.ACC,
+            RT = TrialBlank.RT,
+            isabove200 = as.integer(RT > 200))
+str(df_E2b_raw)
+```
+
+```{r}
+df_E2_raw <- bind_rows(df_E2a_raw, df_E2b_raw) %>% 
+  mutate(Feature = as_factor(Feature))
+
+str(df_E2_raw)
+```
+
+```{r child=c("EyeOpen_E1.Rmd",  "EyeOpen_SessInfo.Rmd")}
+```
