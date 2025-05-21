@@ -46,10 +46,11 @@ repeated_measures_d(t_E1a_acc)
 #### RM-ANOVA
 Whether the performance varies across the four locations:
 ```{r}
-aov_E1a_acc <- aov_4(Acc ~ State * Location + 
-                       (State * Location | SubjCode),
-                     data = df_E1a_clean,
-                     fun_aggregate = mean)
+aov_E1a_acc <- aov_ez(id = "SubjCode",
+                      dv = "Acc",
+                      within = c("State", "Location"),
+                      data = df_E1a_clean,
+                      fun_aggregate = mean)
 aov_E1a_acc
 ```
 
@@ -128,10 +129,11 @@ repeated_measures_d(t_E1a_rt)
 #### RM-ANOVA
 
 ```{r}
-aov_E1a_rt <- aov_4(RT ~ State * Location + 
-                       (State * Location | SubjCode),
+aov_E1a_rt <- aov_ez(id = "SubjCode",
+                     dv = "RT",
+                     within = c("State", "Location"),
                      data = df_E1a_clean %>% 
-                      filter(Acc == 1),
+                       filter(Acc == 1),
                      fun_aggregate = mean)
 aov_E1a_rt
 ```
@@ -219,10 +221,11 @@ repeated_measures_d(t_E1b_acc)
 #### RM-ANOVA
 
 ```{r}
-aov_E1b_acc <- aov_4(Acc ~ State * Location + 
-                       (State * Location | SubjCode),
-                     data = df_E1b_clean,
-                     fun_aggregate = mean)
+aov_E1b_acc <- aov_ez(id = "SubjCode",
+                      dv = "Acc",
+                      within = c("State", "Location"),
+                      data = df_E1b_clean,
+                      fun_aggregate = mean)
 aov_E1b_acc
 ```
 
@@ -299,10 +302,11 @@ repeated_measures_d(t_E1b_rt)
 #### RM-ANOVA
 
 ```{r}
-aov_E1b_rt <- aov_4(RT ~ State * Location + 
-                       (State * Location | SubjCode),
+aov_E1b_rt <- aov_ez(id = "SubjCode",
+                     dv = "RT",
+                     within = c("State", "Location"),
                      data = df_E1b_clean %>% 
-                      filter(Acc == 1),
+                       filter(Acc == 1),
                      fun_aggregate = mean)
 aov_E1b_rt
 ```
@@ -357,8 +361,10 @@ df_E1_clean <- df_E1_raw %>%
 #### RM-ANOVA
 
 ```{r}
-aov_E1_acc <- aov_4(Acc ~ Feature * State * Location + 
-                       (State * Location | SubjCode),
+aov_E1_acc <- aov_ez(id = "SubjCode",
+                     dv = "Acc",
+                     within = c("State", "Location"),
+                     between = "Feature",
                      data = df_E1_clean,
                      fun_aggregate = mean)
 aov_E1_acc
@@ -411,11 +417,13 @@ Location:
 #### RM-ANOVA
 
 ```{r}
-aov_E1_rt <- aov_4(RT ~ State * Location * Feature + 
-                     (State * Location | SubjCode),
-                   data = filter(df_E1_clean,
-                                 Acc == 1),
-                   fun_aggregate = mean)
+aov_E1_rt <- aov_ez(id = "SubjCode",
+                    dv = "RT",
+                    within = c("State", "Location"),
+                    between = "Feature",
+                    data = filter(df_E1_clean,
+                                  Acc == 1),
+                    fun_aggregate = mean)
 aov_E1_rt
 ```
 

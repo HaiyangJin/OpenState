@@ -3210,10 +3210,11 @@ repeated_measures_d(t_E1a_acc)</code></pre>
 <div id="rm-anova" class="section level4" number="2.1.1.2">
 <h4><span class="header-section-number">2.1.1.2</span> RM-ANOVA</h4>
 <p>Whether the performance varies across the four locations:</p>
-<pre class="r"><code>aov_E1a_acc &lt;- aov_4(Acc ~ State * Location + 
-                       (State * Location | SubjCode),
-                     data = df_E1a_clean,
-                     fun_aggregate = mean)
+<pre class="r"><code>aov_E1a_acc &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                      dv = &quot;Acc&quot;,
+                      within = c(&quot;State&quot;, &quot;Location&quot;),
+                      data = df_E1a_clean,
+                      fun_aggregate = mean)
 aov_E1a_acc</code></pre>
 <pre><code>## Anova Table (Type 3 tests)
 ## 
@@ -3336,10 +3337,11 @@ repeated_measures_d(t_E1a_rt)</code></pre>
 </div>
 <div id="rm-anova-1" class="section level4" number="2.1.2.2">
 <h4><span class="header-section-number">2.1.2.2</span> RM-ANOVA</h4>
-<pre class="r"><code>aov_E1a_rt &lt;- aov_4(RT ~ State * Location + 
-                       (State * Location | SubjCode),
+<pre class="r"><code>aov_E1a_rt &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                     dv = &quot;RT&quot;,
+                     within = c(&quot;State&quot;, &quot;Location&quot;),
                      data = df_E1a_clean %&gt;% 
-                      filter(Acc == 1),
+                       filter(Acc == 1),
                      fun_aggregate = mean)
 aov_E1a_rt</code></pre>
 <pre><code>## Anova Table (Type 3 tests)
@@ -3468,10 +3470,11 @@ repeated_measures_d(t_E1b_acc)</code></pre>
 </div>
 <div id="rm-anova-2" class="section level4" number="2.2.1.2">
 <h4><span class="header-section-number">2.2.1.2</span> RM-ANOVA</h4>
-<pre class="r"><code>aov_E1b_acc &lt;- aov_4(Acc ~ State * Location + 
-                       (State * Location | SubjCode),
-                     data = df_E1b_clean,
-                     fun_aggregate = mean)
+<pre class="r"><code>aov_E1b_acc &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                      dv = &quot;Acc&quot;,
+                      within = c(&quot;State&quot;, &quot;Location&quot;),
+                      data = df_E1b_clean,
+                      fun_aggregate = mean)
 aov_E1b_acc</code></pre>
 <pre><code>## Anova Table (Type 3 tests)
 ## 
@@ -3593,10 +3596,11 @@ repeated_measures_d(t_E1b_rt)</code></pre>
 </div>
 <div id="rm-anova-3" class="section level4" number="2.2.2.2">
 <h4><span class="header-section-number">2.2.2.2</span> RM-ANOVA</h4>
-<pre class="r"><code>aov_E1b_rt &lt;- aov_4(RT ~ State * Location + 
-                       (State * Location | SubjCode),
+<pre class="r"><code>aov_E1b_rt &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                     dv = &quot;RT&quot;,
+                     within = c(&quot;State&quot;, &quot;Location&quot;),
                      data = df_E1b_clean %&gt;% 
-                      filter(Acc == 1),
+                       filter(Acc == 1),
                      fun_aggregate = mean)
 aov_E1b_rt</code></pre>
 <pre><code>## Anova Table (Type 3 tests)
@@ -3678,8 +3682,10 @@ analysis</h4>
 <h3><span class="header-section-number">2.3.1</span> Accuracy</h3>
 <div id="rm-anova-4" class="section level4" number="2.3.1.1">
 <h4><span class="header-section-number">2.3.1.1</span> RM-ANOVA</h4>
-<pre class="r"><code>aov_E1_acc &lt;- aov_4(Acc ~ Feature * State * Location + 
-                       (State * Location | SubjCode),
+<pre class="r"><code>aov_E1_acc &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                     dv = &quot;Acc&quot;,
+                     within = c(&quot;State&quot;, &quot;Location&quot;),
+                     between = &quot;Feature&quot;,
                      data = df_E1_clean,
                      fun_aggregate = mean)
 aov_E1_acc</code></pre>
@@ -3778,11 +3784,13 @@ feature.</p>
 times</h3>
 <div id="rm-anova-5" class="section level4" number="2.3.2.1">
 <h4><span class="header-section-number">2.3.2.1</span> RM-ANOVA</h4>
-<pre class="r"><code>aov_E1_rt &lt;- aov_4(RT ~ State * Location * Feature + 
-                     (State * Location | SubjCode),
-                   data = filter(df_E1_clean,
-                                 Acc == 1),
-                   fun_aggregate = mean)
+<pre class="r"><code>aov_E1_rt &lt;- aov_ez(id = &quot;SubjCode&quot;,
+                    dv = &quot;RT&quot;,
+                    within = c(&quot;State&quot;, &quot;Location&quot;),
+                    between = &quot;Feature&quot;,
+                    data = filter(df_E1_clean,
+                                  Acc == 1),
+                    fun_aggregate = mean)
 aov_E1_rt</code></pre>
 <pre><code>## Anova Table (Type 3 tests)
 ## 
