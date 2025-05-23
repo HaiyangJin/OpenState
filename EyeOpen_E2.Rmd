@@ -50,6 +50,11 @@ emmeans(aov_E2_acc, ~ State + Feature | Orientation) %>%
 ```
 Differences between open and closed states does not depend on the orientation.
 
+```{r}
+emmeans(aov_E2_acc, ~ State + Orientation | Feature) %>% 
+  contrast(interaction = "pairwise")
+```
+
 #### Plot
 
 ```{r}
@@ -95,7 +100,7 @@ emmeans(aov_E2_rt, ~ State + Feature | Orientation) %>%
 ```
 
 ```{r}
-emmeans(aov_E2_rt, ~ State + Feature + Orientation) %>% 
+emmeans(aov_E2_rt, ~ State + Orientation | Feature) %>% 
   contrast(interaction = "pairwise")
 ```
 

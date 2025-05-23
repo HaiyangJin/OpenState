@@ -3775,6 +3775,15 @@ analysis</h4>
 ##  open - closed  eye - mouth       -0.0319 0.0298 23  -1.070  0.2956</code></pre>
 <p>Differences between open and closed states does not depend on the
 orientation.</p>
+<pre class="r"><code>emmeans(aov_E2_acc, ~ State + Orientation | Feature) %&gt;% 
+  contrast(interaction = &quot;pairwise&quot;)</code></pre>
+<pre><code>## Feature = eye:
+##  State_pairwise Orientation_pairwise estimate     SE df t.ratio p.value
+##  open - closed  upright - inverted   -0.00716 0.0138 23  -0.519  0.6085
+## 
+## Feature = mouth:
+##  State_pairwise Orientation_pairwise estimate     SE df t.ratio p.value
+##  open - closed  upright - inverted   -0.05013 0.0208 23  -2.410  0.0243</code></pre>
 </div>
 <div id="plot-2" class="section level4" number="3.0.1.4">
 <h4><span class="header-section-number">3.0.1.4</span> Plot</h4>
@@ -3859,10 +3868,15 @@ analysis</h4>
 ## Orientation = inverted:
 ##  State_pairwise Feature_pairwise estimate   SE df t.ratio p.value
 ##  open - closed  eye - mouth         -42.4 14.4 23  -2.956  0.0071</code></pre>
-<pre class="r"><code>emmeans(aov_E2_rt, ~ State + Feature + Orientation) %&gt;% 
+<pre class="r"><code>emmeans(aov_E2_rt, ~ State + Orientation | Feature) %&gt;% 
   contrast(interaction = &quot;pairwise&quot;)</code></pre>
-<pre><code>##  State_pairwise Feature_pairwise Orientation_pairwise estimate   SE df t.ratio p.value
-##  open - closed  eye - mouth      upright - inverted      -9.56 11.2 23  -0.852  0.4031</code></pre>
+<pre><code>## Feature = eye:
+##  State_pairwise Orientation_pairwise estimate   SE df t.ratio p.value
+##  open - closed  upright - inverted      -13.2 5.82 23  -2.260  0.0336
+## 
+## Feature = mouth:
+##  State_pairwise Orientation_pairwise estimate   SE df t.ratio p.value
+##  open - closed  upright - inverted       -3.6 9.33 23  -0.385  0.7035</code></pre>
 </div>
 <div id="plot-3" class="section level4" number="3.0.2.4">
 <h4><span class="header-section-number">3.0.2.4</span> Plot</h4>
