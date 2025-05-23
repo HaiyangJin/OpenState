@@ -43,11 +43,11 @@ repeated_measures_d(t_E1a_acc)
 ```
 
 #### RM-ANOVA
-Whether the performance varies across the four locations:
+
 ```{r}
 aov_E1a_acc <- aov_ez(id = "SubjCode",
                       dv = "isCorrect",
-                      within = c("State", "Location"),
+                      within = "State",
                       data = df_E1a_clean,
                       fun_aggregate = mean)
 aov_E1a_acc
@@ -61,7 +61,7 @@ aov_E1a_acc %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1a_acc <- emmeans(aov_E1a_acc, ~ State * Location)
+emm_E1a_acc <- emmeans(aov_E1a_acc, ~ State)
 emm_E1a_acc
 ```
 
@@ -69,32 +69,12 @@ emm_E1a_acc
 
 Open vs. closed state:
 ```{r}
-emmeans(aov_E1a_acc, "pairwise" ~ State)
+contrast(emm_E1a_acc, "pairwise")
 ```
 
 ```{r}
-emmip(aov_E1a_acc, ~State, CIs = TRUE)
+emmip(aov_E1a_acc, ~ State, CIs = TRUE)
 ```
-
-```{r}
-contrast(emm_E1a_acc, "pairwise", simple = "State")[1:4] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1a_acc, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-emmip(aov_E1a_acc, State ~ Location, CIs = TRUE)
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
 
 ### Correct response times
 
@@ -135,7 +115,7 @@ repeated_measures_d(t_E1a_rt)
 ```{r}
 aov_E1a_rt <- aov_ez(id = "SubjCode",
                      dv = "RT",
-                     within = c("State", "Location"),
+                     within = c("State"),
                      data = df_E1a_clean %>% 
                        filter(isCorrect == 1),
                      fun_aggregate = mean)
@@ -150,39 +130,19 @@ aov_E1a_rt %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1a_rt <- emmeans(aov_E1a_rt, ~ State * Location)
+emm_E1a_rt <- emmeans(aov_E1a_rt, ~ State)
 emm_E1a_rt
 ```
 
 #### Follow-up analysis
 
 ```{r}
-emmeans(aov_E1a_rt, "pairwise" ~ State)
+contrast(emm_E1a_rt, "pairwise")
 ```
 
 ```{r}
-emmip(aov_E1a_rt, ~State, CIs = TRUE)
+emmip(aov_E1a_rt, ~ State, CIs = TRUE)
 ```
-
-```{r}
-contrast(emm_E1a_rt, "pairwise", simple = "State")[1:4] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1a_rt, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-emmip(aov_E1a_rt, State ~ Location, CIs = TRUE)
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
 
 ## Experiment 1b
 
@@ -232,7 +192,7 @@ repeated_measures_d(t_E1b_acc)
 ```{r}
 aov_E1b_acc <- aov_ez(id = "SubjCode",
                       dv = "isCorrect",
-                      within = c("State", "Location"),
+                      within = c("State"),
                       data = df_E1b_clean,
                       fun_aggregate = mean)
 aov_E1b_acc
@@ -246,39 +206,19 @@ aov_E1b_acc %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1b_acc <- emmeans(aov_E1b_acc, ~ State * Location)
+emm_E1b_acc <- emmeans(aov_E1b_acc, ~ State)
 emm_E1b_acc
 ```
 
 #### Follow-up analysis
 
 ```{r}
-emmeans(aov_E1b_acc, "pairwise" ~ State)
+contrast(emm_E1b_acc, "pairwise")
 ```
 
 ```{r}
 emmip(aov_E1b_acc, ~ State, CIs = TRUE)
 ```
-
-```{r}
-contrast(emm_E1b_acc, "pairwise", simple = "State")[1:4] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1b_acc, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-emmip(aov_E1b_acc, State ~ Location, CIs = TRUE)
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
 
 ### Correct response times
 
@@ -318,7 +258,7 @@ repeated_measures_d(t_E1b_rt)
 ```{r}
 aov_E1b_rt <- aov_ez(id = "SubjCode",
                      dv = "RT",
-                     within = c("State", "Location"),
+                     within = c("State"),
                      data = df_E1b_clean %>% 
                        filter(isCorrect == 1),
                      fun_aggregate = mean)
@@ -332,39 +272,19 @@ aov_E1b_rt %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1b_rt <- emmeans(aov_E1b_rt, ~ State * Location)
+emm_E1b_rt <- emmeans(aov_E1b_rt, ~ State)
 emm_E1b_rt
 ```
 
 #### Follow-up analysis
 
 ```{r}
-emmeans(aov_E1b_rt, "pairwise" ~ State)
+contrast(emm_E1b_rt, "pairwise")
 ```
 
 ```{r}
 emmip(aov_E1b_rt, ~ State, CIs = TRUE)
 ```
-
-```{r}
-contrast(emm_E1b_rt, "pairwise", simple = "State")[1:4] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1b_rt, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-emmip(aov_E1b_rt, State ~ Location, CIs = TRUE)
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
 
 ## Experiment 1a & 1b
 
@@ -381,7 +301,7 @@ df_E1_clean <- df_E1_raw %>%
 ```{r}
 aov_E1_acc <- aov_ez(id = "SubjCode",
                      dv = "isCorrect",
-                     within = c("State", "Location"),
+                     within = c("State"),
                      between = "Feature",
                      data = df_E1_clean,
                      fun_aggregate = mean)
@@ -396,7 +316,7 @@ aov_E1_acc %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1_acc <- emmeans(aov_E1_acc, ~ Feature * State * Location)
+emm_E1_acc <- emmeans(aov_E1_acc, ~ Feature * State)
 emm_E1_acc
 ```
 
@@ -412,15 +332,6 @@ emmeans(aov_E1_acc, ~ State + Feature) %>%
 ```
 Differences between open and closed states does not depend on the feature.
 
-```{r}
-contrast(emm_E1_acc, "pairwise", simple = "State")[1:8] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1_acc, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
 
 #### Plot
 
@@ -429,17 +340,6 @@ emmip(aov_E1_acc, State ~ Feature, CIs = TRUE) +
   labs(y = "Accuracy")
 ```
 
-```{r}
-emmip(aov_E1_acc, State ~ Feature | Location, CIs = TRUE) +
-  labs(y = "Accuracy")
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
-
 ### Correct response times
 
 #### RM-ANOVA
@@ -447,7 +347,7 @@ Location:
 ```{r}
 aov_E1_rt <- aov_ez(id = "SubjCode",
                     dv = "RT",
-                    within = c("State", "Location"),
+                    within = c("State"),
                     between = "Feature",
                     data = filter(df_E1_clean,
                                   isCorrect == 1),
@@ -463,7 +363,7 @@ aov_E1_rt %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E1_rt <- emmeans(aov_E1_rt, ~ State * Location * Feature)
+emm_E1_rt <- emmeans(aov_E1_rt, ~ State * Feature)
 emm_E1_rt
 ```
 
@@ -478,24 +378,9 @@ emmeans(aov_E1_rt, ~ State + Feature) %>%
   contrast(interaction = "pairwise")
 ```
 
-```{r}
-contrast(emm_E1_rt, "pairwise", simple = "State")[1:8] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E1_rt, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
 #### Plot
 
 ```{r}
-emmip(aov_E1_rt, State ~ Location | Feature, CIs = TRUE) +
+emmip(aov_E1_rt, State ~ Feature, CIs = TRUE) +
   labs(y = "correct Response Times (ms)")
 ```
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom

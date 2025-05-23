@@ -14,7 +14,7 @@ df_E2_clean <- df_E2_raw %>%
 ```{r}
 aov_E2_acc <- aov_ez(id = "SubjCode",
                      dv = "isCorrect",
-                     within = c("Orientation", "State", "Feature", "Location"),
+                     within = c("Orientation", "State", "Feature"),
                      data = df_E2_clean,
                      fun_aggregate = mean)
 aov_E2_acc
@@ -29,7 +29,7 @@ aov_E2_acc %>%
 #### Estimated marginal means
 
 ```{r}
-emm_E2_acc <- emmeans(aov_E2_acc, ~ Orientation * Feature * State * Location)
+emm_E2_acc <- emmeans(aov_E2_acc, ~ Orientation * Feature * State)
 emm_E2_acc
 ```
 
@@ -50,32 +50,12 @@ emmeans(aov_E2_acc, ~ State + Feature | Orientation) %>%
 ```
 Differences between open and closed states does not depend on the orientation.
 
-```{r}
-contrast(emm_E2_acc, "pairwise", simple = "State")[1:16] %>% 
-  summary(adjust = "none")
-```
-
-```{r}
-contrast(emm_E2_acc, "pairwise", simple = "Location") %>% 
-  summary(adjust = "none")
-```
-
 #### Plot
 
 ```{r}
 emmip(aov_E2_acc, State ~ Feature | Orientation, CIs = TRUE) +
   labs(y = "Accuracy")
 ```
-```{r}
-emmip(aov_E2_acc, State ~ Feature | Orientation + Location, CIs = TRUE) +
-  labs(y = "Accuracy")
-```
-
-Location:
-- `1`: right top
-- `2`: left top
-- `3`: left bottom
-- `4`: right bottom
 
 ### Correct response times
 
