@@ -77,7 +77,7 @@ df_E1a_raw <- readxl::read_excel(file.path("data", "Exp1a_eye_raw_data.xlsx")) %
             State = factor(State, levels = c("open", "close")),
             State = fct_recode(State, open = "open", closed = "close"),
             Location = as.factor(Location),
-            Acc = TrialSlide.ACC,
+            isCorrect = TrialSlide.ACC,
             RT = TrialSlide.RT,
             isabove200 = as.integer(RT > 200))
 str(df_E1a_raw)
@@ -100,7 +100,7 @@ df_E1b_raw <- readxl::read_excel(file.path("data", "Exp1b_mouth_raw_data.xlsx"))
             State = factor(State, levels = c("open", "close")),
             State = fct_recode(State, open = "open", closed = "close"),
             Location = as.factor(Location),
-            Acc = TrialSlide.ACC,
+            isCorrect = TrialSlide.ACC,
             RT = TrialSlide.RT,
             isabove200 = as.integer(RT > 200))
 str(df_E1b_raw)
@@ -113,53 +113,48 @@ df_E1_raw <- bind_rows(df_E1a_raw, df_E1b_raw) %>%
 str(df_E1_raw)
 ```
 
+```{r}
+df_E1_raw %>% 
+  group_by(SubjCode) %>% 
+  summarize(N_200 = sum(!isabove200),
+            ratio_200 = round(1-mean(isabove200), 2)) %>% 
+  filter(N_200 > 0)
+```
+
+
 ## Experiment 2
 
 ```{r}
-df_E2a_raw <- read.csv(file.path("data", "Exp2_eye_raw_data.csv")) %>% 
+df_E2_raw <- read.csv(file.path("data", "Exp2_eye_raw_data.csv")) %>% 
+  mutate(Feature = "eye",
+         Type = type) %>% 
+  bind_rows(read.csv(file.path("data", "Exp2_mouth_raw_data.csv")) %>% 
+              mutate(Feature = "mouth")) %>% 
   filter(Procedure != "PracProc") %>% 
-  transmute(SubjCode = as_factor(sprintf("21%02d", Subject)),
+  transmute(SubjCode = as_factor(sprintf("20%02d", Subject)),
             Age,
             Sex = as.factor(Sex),
-            Feature = "eye",
+            Feature = as.factor(Feature),
             State = str_remove(ExperimentName, "Hard") %>% tolower(),
             State = factor(State, levels = c("open", "close")),
             State = fct_recode(State, open = "open", closed = "close"),
-            Orientation = factor(invertion, levels = c("no", "yes")),
-            Orientation = fct_recode(Orientation, upright = "no", inverted = "yes"),
+            Orientation = factor(Type, 
+                                 levels = c("upright", "invert")),
+            Orientation = fct_recode(Orientation, inverted = "invert"),
             Location = as.factor(Location),
-            Acc = TrialBlank.ACC,
-            RT = TrialBlank.RT,
+            isCorrect = ifelse(TrialSlide.RT==0, TrialBlank.ACC, TrialSlide.ACC),
+            RT = ifelse(TrialSlide.RT==0, 500 + TrialBlank.RT, TrialSlide.RT),
             isabove200 = as.integer(RT > 200))
-str(df_E2a_raw)
-```
-
-
-```{r}
-df_E2b_raw <- read.csv(file.path("data", "Exp2_mouth_raw_data.csv")) %>% 
-  filter(Procedure != "PracProc") %>% 
-  transmute(SubjCode = as_factor(sprintf("21%02d", Subject)),
-            Age,
-            Sex = as.factor(Sex),
-            Feature = "mouth",
-            State = str_remove(ExperimentName, "Hard") %>% tolower(),
-            State = factor(State, levels = c("open", "close")),
-            State = fct_recode(State, open = "open", closed = "close"),
-            Orientation = factor(Type, levels = c("upright", "invert")),
-            Orientation = fct_recode(Orientation, upright = "upright", inverted = "invert"),
-            Location = as.factor(Location),
-            Acc = TrialBlank.ACC,
-            RT = TrialBlank.RT,
-            isabove200 = as.integer(RT > 200))
-str(df_E2b_raw)
-```
-
-```{r}
-df_E2_raw <- bind_rows(df_E2a_raw, df_E2b_raw) %>% 
-  mutate(Feature = as_factor(Feature))
-
 str(df_E2_raw)
 ```
 
-```{r child=c("EyeOpen_E1.Rmd",  "EyeOpen_SessInfo.Rmd")}
+```{r}
+df_E2_raw %>% 
+  group_by(SubjCode) %>% 
+  summarize(N_200 = sum(!isabove200),
+            ratio_200 = round(1-mean(isabove200), 2)) %>% 
+  filter(N_200 > 0)
+```
+
+```{r child=c("EyeOpen_E1.Rmd", "EyeOpen_E2.Rmd", "EyeOpen_SessInfo.Rmd")}
 ```

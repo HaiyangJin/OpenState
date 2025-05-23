@@ -1,0 +1,127 @@
+
+# Experiment 2
+
+```{r}
+df_E2_clean <- df_E2_raw %>% 
+  filter(isabove200 == 1) %>% 
+  select(-isabove200)
+```
+
+### Accuracy
+
+#### RM-ANOVA
+
+```{r}
+aov_E2_acc <- aov_ez(id = "SubjCode",
+                     dv = "isCorrect",
+                     within = c("Orientation", "State", "Feature", "Location"),
+                     data = df_E2_clean,
+                     fun_aggregate = mean)
+aov_E2_acc
+```
+
+```{r}
+aov_E2_acc %>% 
+  eta_squared()
+```
+
+
+#### Estimated marginal means
+
+```{r}
+emm_E2_acc <- emmeans(aov_E2_acc, ~ Orientation * Feature * State * Location)
+emm_E2_acc
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E2_acc, "pairwise" ~ State)
+```
+
+```{r}
+emmeans(aov_E2_acc, ~ State | Feature + Orientation) %>% 
+  contrast("pairwise") 
+```
+
+```{r}
+emmeans(aov_E2_acc, ~ State + Feature | Orientation) %>% 
+  contrast(interaction = "pairwise")
+```
+Differences between open and closed states does not depend on the orientation.
+
+```{r}
+contrast(emm_E2_acc, "pairwise", simple = "State")[1:16] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+contrast(emm_E2_acc, "pairwise", simple = "Location") %>% 
+  summary(adjust = "none")
+```
+
+#### Plot
+
+```{r}
+emmip(aov_E2_acc, State ~ Feature | Orientation, CIs = TRUE) +
+  labs(y = "Accuracy")
+```
+```{r}
+emmip(aov_E2_acc, State ~ Feature | Orientation + Location, CIs = TRUE) +
+  labs(y = "Accuracy")
+```
+
+Location:
+- `1`: right top
+- `2`: left top
+- `3`: left bottom
+- `4`: right bottom
+
+### Correct response times
+
+#### RM-ANOVA
+
+```{r}
+aov_E2_rt <- aov_ez(id = "SubjCode",
+                    dv = "RT",
+                    within = c("Orientation", "Feature", "State"),
+                    data = filter(df_E2_clean,
+                                  isCorrect==1),
+                    fun_aggregate = mean)
+aov_E2_rt
+```
+
+#### Estimated marginal means
+
+```{r}
+emm_E2_rt <- emmeans(aov_E2_rt, ~ Orientation * State * Feature)
+emm_E2_rt
+```
+
+#### Follow-up analysis
+
+```{r}
+emmeans(aov_E2_rt, "pairwise" ~ State)
+```
+
+```{r}
+contrast(emm_E2_rt, "pairwise", simple = "State")[1:4] %>% 
+  summary(adjust = "none")
+```
+
+```{r}
+emmeans(aov_E2_rt, ~ State + Feature | Orientation) %>% 
+  contrast(interaction = "pairwise")
+```
+
+```{r}
+emmeans(aov_E2_rt, ~ State + Feature + Orientation) %>% 
+  contrast(interaction = "pairwise")
+```
+
+#### Plot
+
+```{r}
+emmip(aov_E2_rt, State ~ Feature | Orientation, CIs = TRUE) +
+  labs(y = "correct Response Times (ms)")
+```

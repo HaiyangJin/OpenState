@@ -16,7 +16,7 @@ df_E1a_clean <- df_E1a_raw %>%
 ```{r}
 df_E1a_acc <- df_E1a_clean %>% 
   group_by(SubjCode, Feature, State) %>% 
-  summarize(Acc = mean(Acc),
+  summarize(Acc = mean(isCorrect),
             .groups = "drop")
 df_E1a_acc
 ```
@@ -39,7 +39,6 @@ t_E1a_acc
 ```
 
 ```{r}
-# effect size
 repeated_measures_d(t_E1a_acc)
 ```
 
@@ -47,11 +46,16 @@ repeated_measures_d(t_E1a_acc)
 Whether the performance varies across the four locations:
 ```{r}
 aov_E1a_acc <- aov_ez(id = "SubjCode",
-                      dv = "Acc",
+                      dv = "isCorrect",
                       within = c("State", "Location"),
                       data = df_E1a_clean,
                       fun_aggregate = mean)
 aov_E1a_acc
+```
+
+```{r}
+aov_E1a_acc %>% 
+  eta_squared()
 ```
 
 #### Estimated marginal means
@@ -96,7 +100,7 @@ Location:
 
 ```{r}
 df_E1a_rt <- df_E1a_clean %>% 
-  filter(Acc == 1) %>%
+  filter(isCorrect == 1) %>%
   group_by(SubjCode, Feature, State) %>% 
   summarize(meanRT = round(mean(RT)),
             .groups = "drop")
@@ -133,9 +137,14 @@ aov_E1a_rt <- aov_ez(id = "SubjCode",
                      dv = "RT",
                      within = c("State", "Location"),
                      data = df_E1a_clean %>% 
-                       filter(Acc == 1),
+                       filter(isCorrect == 1),
                      fun_aggregate = mean)
 aov_E1a_rt
+```
+
+```{r}
+aov_E1a_rt %>% 
+  eta_squared()
 ```
 
 #### Estimated marginal means
@@ -190,7 +199,7 @@ df_E1b_clean <- df_E1b_raw %>%
 ```{r}
 df_E1b_acc <- df_E1b_clean %>% 
   group_by(SubjCode, Feature, State) %>% 
-  summarize(Acc = mean(Acc),
+  summarize(Acc = mean(isCorrect),
             N = n(),
             .groups = "drop")
 df_E1b_acc
@@ -222,11 +231,16 @@ repeated_measures_d(t_E1b_acc)
 
 ```{r}
 aov_E1b_acc <- aov_ez(id = "SubjCode",
-                      dv = "Acc",
+                      dv = "isCorrect",
                       within = c("State", "Location"),
                       data = df_E1b_clean,
                       fun_aggregate = mean)
 aov_E1b_acc
+```
+
+```{r}
+aov_E1b_acc %>% 
+  eta_squared()
 ```
 
 #### Estimated marginal means
@@ -270,7 +284,7 @@ Location:
 
 ```{r}
 df_E1b_rt <- df_E1b_clean %>% 
-  filter(Acc == 1) %>%
+  filter(isCorrect == 1) %>%
   group_by(SubjCode, Feature, State) %>% 
   summarize(meanRT = round(mean(RT)),
             .groups = "drop")
@@ -306,11 +320,15 @@ aov_E1b_rt <- aov_ez(id = "SubjCode",
                      dv = "RT",
                      within = c("State", "Location"),
                      data = df_E1b_clean %>% 
-                       filter(Acc == 1),
+                       filter(isCorrect == 1),
                      fun_aggregate = mean)
 aov_E1b_rt
 ```
 
+```{r}
+aov_E1b_rt %>% 
+  eta_squared()
+```
 #### Estimated marginal means
 
 ```{r}
@@ -362,12 +380,17 @@ df_E1_clean <- df_E1_raw %>%
 
 ```{r}
 aov_E1_acc <- aov_ez(id = "SubjCode",
-                     dv = "Acc",
+                     dv = "isCorrect",
                      within = c("State", "Location"),
                      between = "Feature",
                      data = df_E1_clean,
                      fun_aggregate = mean)
 aov_E1_acc
+```
+
+```{r}
+aov_E1_acc %>% 
+  eta_squared()
 ```
 
 #### Estimated marginal means
@@ -402,7 +425,12 @@ contrast(emm_E1_acc, "pairwise", simple = "Location") %>%
 #### Plot
 
 ```{r}
-emmip(aov_E1_acc, State ~ Location | Feature, CIs = TRUE) +
+emmip(aov_E1_acc, State ~ Feature, CIs = TRUE) +
+  labs(y = "Accuracy")
+```
+
+```{r}
+emmip(aov_E1_acc, State ~ Feature | Location, CIs = TRUE) +
   labs(y = "Accuracy")
 ```
 
@@ -422,9 +450,14 @@ aov_E1_rt <- aov_ez(id = "SubjCode",
                     within = c("State", "Location"),
                     between = "Feature",
                     data = filter(df_E1_clean,
-                                  Acc == 1),
+                                  isCorrect == 1),
                     fun_aggregate = mean)
 aov_E1_rt
+```
+
+```{r}
+aov_E1_rt %>% 
+  eta_squared()
 ```
 
 #### Estimated marginal means
